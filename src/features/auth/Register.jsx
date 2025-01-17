@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
 import { Link, useNavigate } from "react-router-dom";
-import { Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -11,110 +13,109 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { generateToken, registerUserWithGoogle } from "@/services/api";
 import {
-  signInWithEmailAndPassword,
-  signInWithPopup,
-  GoogleAuthProvider,
-} from "firebase/auth";
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Input } from "@/components/ui/input";
+import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import { auth } from "@/firebase";
 import { toast } from "sonner";
-import { Loader2 } from "lucide-react";
+import { registerUser } from "@/services/api";
 
-export default function LoginForm() {
+const formSchema = z.object({
+  username: z.string().min(4, {
+    message: "Full name must be at least 4 characters.",
+  }),
+  email: z.string().email({
+    message: "Please enter a valid email address.",
+  }),
+  profileImage: z
+    .string()
+    .url({ message: "Please provide a valid URL for the profile image." }),
+  password: z
+    .string()
+    .min(8, { message: "Password must be at least 8 characters." })
+    .regex(/[A-Z]/, {
+      message: "Password must contain at least one uppercase letter.",
+    })
+    .regex(/[a-z]/, {
+      message: "Password must contain at least one lowercase letter.",
+    })
+    .regex(/[0-9]/, { message: "Password must contain at least one number." })
+    .regex(/[@$!%*?&#]/, {
+      message: "Password must contain at least one special character.",
+    }),
+  role: z.enum(["WORKER", "BUYER"], {
+    message: "Please select a valid role.",
+  }),
+});
+
+export default function RegisterForm() {
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    document.title = "Login - MicroTask";
+    document.title = "Register - MicroTask";
   }, []);
 
   const form = useForm({
+    resolver: zodResolver(formSchema),
     defaultValues: {
+      username: "",
       email: "",
+      profileImage: "",
       password: "",
+      role: "",
     },
   });
 
   async function onSubmit(values) {
+    console.log(values);
     try {
       setIsLoading(true);
-
-      // Sign in with Firebase
-      const userCredential = await signInWithEmailAndPassword(
+      const userCredential = await createUserWithEmailAndPassword(
         auth,
         values.email,
         values.password
       );
-      console.log("logged user's credentials", userCredential);
-      // Get user details from Firebase
-      const { user } = userCredential;
-      const { uid, email, displayName, photoURL } = user;
-
-      // Call the backend to generate a JWT
-      const response = await generateToken({
-        uid,
-        email,
-        displayName,
-        photoURL,
+      await updateProfile(userCredential.user, {
+        displayName: values.username,
+        photoURL: values.profileImage,
       });
-      if (response.status === 200) {
-        // Store the token in localStorage
-        const { token } = response.data;
-        localStorage.setItem("authToken", token);
+      const firebaseUser = userCredential.user;
+      console.log("user-> ", firebaseUser);
+      console.log("userUid-> ", firebaseUser.uid);
+
+      const response = await registerUser({
+        firebaseUid: firebaseUser.uid,
+        username: firebaseUser.displayName,
+        email: firebaseUser.email,
+        profileImage: firebaseUser.photoURL,
+        role: values.role,
+      });
+      if (response.status === 201) {
+        toast.success("Registration successful!");
       }
 
-      toast.success("Redirecting to homepage...");
-      navigate("/");
+      navigate("/login");
     } catch (error) {
-      console.error("Error in SignInForm:", error);
-      toast.error(error.response?.data?.message || error.message);
+      console.error(error);
+      toast.error(error.message);
     } finally {
       setIsLoading(false);
+      form.reset();
     }
   }
-
-  //Handle Google login
-  const handleGoogleLogin = async () => {
-    const provider = new GoogleAuthProvider();
-    try {
-      let result;
-
-      // Use popup for desktop
-      result = await signInWithPopup(auth, provider);
-
-      const user = result?.user || auth?.currentUser;
-
-      // Extract user information
-      const userData = {
-        firebaseUid: user.uid,
-        username: user.displayName,
-        email: user.email,
-        profileImage: user.photoURL,
-      };
-
-      // Make an API call to check if the user exists and save if not
-      const response = await registerUserWithGoogle(userData);
-
-      if (response.status === 201) {
-        toast.success("Google Login successful! Account created.");
-      } else if (response.status === 200) {
-        toast.success("Google Login successful!");
-      }
-
-      // Redirect to homepage
-      navigate("/");
-    } catch (error) {
-      toast.error(error.message || "An error occurred during Google login.");
-    }
-  };
 
   return (
     <div className="relative min-h-screen bg-white">
       {/* Header */}
-      <div className="absolute left-0 -top-1 flex w-full justify-between p-6">
+      <div className="absolute left-0 -top-3 flex w-full justify-between p-6">
         <div className="flex items-center gap-2">
           <div className="h-8 w-8 rounded bg-purple-600" />
           <span className="text-sm text-gray-600">
@@ -154,10 +155,10 @@ export default function LoginForm() {
 
       {/* Form Card */}
       <div className="relative z-10 flex min-h-screen items-center justify-center px-4">
-        <div className="w-full max-w-[350px] md:max-w-[400px] rounded-lg bg-white p-8   shadow-[0_0_20px_rgba(0,0,0,0.10)]">
-          <div className="space-y-6">
-            <h1 className="text-center text-3xl font-bold text-gray-900">
-              Welcome Back!
+        <div className="w-full max-w-[400px] md:max-w-[450px] rounded-lg bg-white p-8 shadow-[0_0_20px_rgba(0,0,0,0.10)]">
+          <div className="space-y-1">
+            <h1 className="text-center text-3xl mb-4 font-bold text-gray-900">
+              Seconds to sign up!
             </h1>
 
             <Form {...form}>
@@ -165,6 +166,21 @@ export default function LoginForm() {
                 onSubmit={form.handleSubmit(onSubmit)}
                 className="space-y-4"
               >
+                <FormField
+                  control={form.control}
+                  name="username"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-neutral-950">
+                        Username
+                      </FormLabel>
+                      <FormControl>
+                        <Input placeholder="John Doe" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
                 <FormField
                   control={form.control}
                   name="email"
@@ -178,7 +194,24 @@ export default function LoginForm() {
                     </FormItem>
                   )}
                 />
-
+                <FormField
+                  control={form.control}
+                  name="profileImage"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-neutral-950">
+                        Image Url
+                      </FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder="https://image.jpeg.unsplash"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
                 <FormField
                   control={form.control}
                   name="password"
@@ -213,6 +246,28 @@ export default function LoginForm() {
                     </FormItem>
                   )}
                 />
+                {/* Role Selector */}
+                <FormField
+                  control={form.control}
+                  name="role"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-neutral-950">Role</FormLabel>
+                      <FormControl>
+                        <Select onValueChange={field.onChange}>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select a role" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="WORKER">Worker</SelectItem>
+                            <SelectItem value="BUYER">Buyer</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
                 <Button
                   type="submit"
@@ -220,21 +275,15 @@ export default function LoginForm() {
                 >
                   {isLoading ? (
                     <div className="flex items-center justify-center gap-2">
-                      <Loader2 className="h-6 w-6 text-purple-700" />{" "}
-                      <span>Logging In...</span>
+                      <Loader2 className="h-6 w-6 text-purple-700 dark:text-white" />{" "}
+                      <span>Registering...</span>
                     </div>
                   ) : (
-                    "Login"
+                    "Register Account"
                   )}
                 </Button>
               </form>
             </Form>
-            <Button
-              onClick={handleGoogleLogin}
-              className="bg-red-600 hover:bg-red-500 text-white p-2 w-full mb-4 border rounded-lg"
-            >
-              Login with Google
-            </Button>
 
             <div className="flex items-center justify-center gap-2">
               <Button
@@ -243,12 +292,9 @@ export default function LoginForm() {
                 asChild
               >
                 <p>
-                  Don&apos;t have an account?
-                  <Link
-                    to="/register"
-                    className="text-purple-600 hover:underline"
-                  >
-                    Register
+                  Already have an account?
+                  <Link to="/login" className="text-purple-600 hover:underline">
+                    Login
                   </Link>
                 </p>
               </Button>

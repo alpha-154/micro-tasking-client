@@ -1,5 +1,5 @@
 import React from "react";
-import AppRoute from "./routes/AppRoute";
+import AppRoute from "./routes/main/AppRoute";
 
 import { Toaster } from "@/components/ui/sonner";
 

@@ -38,9 +38,11 @@ const registerUserWithGoogle = (registrationData) => {
   return apiClient.post("/api/user/register-with-google", registrationData);
 };
 
-const fetchUserProfile = () => {
-  return apiClient.get("/api/user/profile");
+const fetchUserProfile = (uid) => {
+  return apiClient.get(`/get-user-profile/${uid}`);
 };
+
+
 
 export {
   registerUser,
