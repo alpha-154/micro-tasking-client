@@ -39,9 +39,29 @@ const registerUserWithGoogle = (registrationData) => {
 };
 
 const fetchUserProfile = (uid) => {
-  return apiClient.get(`/get-user-profile/${uid}`);
+  return apiClient.get(`/api/user/get-user-profile/${uid}`);
 };
 
+const fetchBuyerStatsWithPendingSubmissions = (uid) => {
+  return apiClient.get(`/api/buyer/get-all-tasks-with-submissionData/${uid}`);
+}
+
+const addTask = (taskData) => {
+  return apiClient.post("/api/buyer/create-task", taskData);
+}
+
+const fetchTasksbyUser = (uid) => {
+  return apiClient.get(`/api/buyer/get-all-tasks/${uid}`);
+}
+
+const updateTask = (taskData) => {
+  return apiClient.patch("/api/buyer/update-task", taskData);
+}
+
+const deleteTask = (uid, taskId) => {
+  console.log(uid, taskId);
+  return apiClient.delete(`/api/buyer/delete-task/${uid}/${taskId}`);
+}
 
 
 export {
@@ -49,4 +69,9 @@ export {
   generateToken,
   registerUserWithGoogle,
   fetchUserProfile,
+  fetchBuyerStatsWithPendingSubmissions ,
+  addTask,
+  fetchTasksbyUser,
+  updateTask,
+  deleteTask
 };

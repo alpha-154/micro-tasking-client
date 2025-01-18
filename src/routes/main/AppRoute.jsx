@@ -26,6 +26,7 @@ import WorkerHome from "@/features/dashboard/worker/WorkerHome";
 import TaskLIst from "@/features/dashboard/worker/TaskLIst";
 import MySubmissions from "@/features/dashboard/worker/MySubmissions";
 import Withdrawals from "@/features/dashboard/worker/Withdrawals";
+import TaskDetail from "@/features/dashboard/worker/TaskDetail";
 
 const AppRoute = () => (
   <Router>
@@ -103,7 +104,7 @@ const AppRoute = () => (
           }
         />
         <Route
-          path="purchase-coins"
+          path="purchase-coin"
           element={
             <BuyerPrivate>
               <PurchaseCoin />
@@ -137,7 +138,7 @@ const AppRoute = () => (
           }
         />
         <Route
-          path="task-lists"
+          path="task-list"
           element={
             <WorkerPrivate>
               <TaskLIst />
@@ -157,6 +158,14 @@ const AppRoute = () => (
           element={
             <WorkerPrivate>
               <Withdrawals />
+            </WorkerPrivate>
+          }
+        />
+        <Route
+          path="task-details/:taskId"
+          element={
+            <WorkerPrivate>
+              <TaskDetail/>
             </WorkerPrivate>
           }
         />

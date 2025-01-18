@@ -6,7 +6,8 @@ const AdminPrivate = ({ children }) => {
   const user = useSelector((state) => state.user.user);
   console.log("admin route-> user: ", user);
 
-  return user?.role !== "ADMIN" ? <Navigate to="/unauthorized" /> : children;
+  // return user?.role !== "ADMIN" ? <Navigate to="/unauthorized" /> : children;
+  return children;
 };
 
 export default AdminPrivate;

@@ -8,11 +8,12 @@ const BuyerPrivate = ({ children }) => {
 
   console.log("buyer private route-> user: ", user);
 
-  return user?.role !== "BUYER" ? (
-    <Navigate to="/unauthorized" />
-  ) : (
-    children
-  );
+  // return user?.role !== "BUYER" ? (
+  //   <Navigate to="/unauthorized" />
+  // ) : (
+  //   children
+  // );
+  return children;
 };
 
 export default BuyerPrivate;

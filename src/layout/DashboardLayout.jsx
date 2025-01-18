@@ -9,12 +9,19 @@ const DashboardLayout = ({ role }) => (
     <div className="min-h-screen max-w-[16rem]">
       <Sidebar role={role} />
     </div>
-    <div className="flex flex-col gap-5 w-full flex-1 mt-8">
-      <Header />
+    <div className="w-full mt-10">
+      <div className="w-full flex justify-start">
+        <Header 
+        username="Sarah Wilson"
+        role="Premium Member"
+        coins={750}
+        avatarUrl="https://images.pexels.com/photos/91227/pexels-photo-91227.jpeg?auto=compress&cs=tinysrgb&w=800"
+        />
+      </div>
       <main>
         <Outlet />
       </main>
-      {/* add footer */}
+      {/* <Footer /> */}
     </div>
   </div>
 );
