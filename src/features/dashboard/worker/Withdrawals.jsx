@@ -172,7 +172,7 @@ const Withdrawals = () => {
                 <Button type="submit">Withdraw</Button>
               ) : (
                 <p className="text-red-500">
-                  Insufficient coins. Minimum withdrawal is{" "}
+                   Minimum withdrawal is{" "}
                   {MINIMUM_WITHDRAWAL_COINS} coins.
                 </p>
               )}

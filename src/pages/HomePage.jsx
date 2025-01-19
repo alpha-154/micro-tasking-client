@@ -1,12 +1,12 @@
 import { useState, useEffect } from "react";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
-
-// import FeaturedServices from "@/customComponents/FeaturedServices";
-// import TestimonialSection from "@/customComponents/TestimonialSection";
 import Hero from "@/components/customComponents/Hero";
 import TopWorkersSection from "@/components/customComponents/TopWorkers";
-
+import TestimonialSection from "@/components/customComponents/Testimonials";
+import HowItWorks from "@/components/customComponents/HowItWorks";
+import WhyChooseUs from "@/components/customComponents/WhyChooseUs";
+import JobApply from "@/components/customComponents/JobApply";
 
 const HomePage = () => {
   // dynamic title on the browser's title bar
@@ -51,10 +51,11 @@ const HomePage = () => {
       </div>
       <Hero />
       <TopWorkersSection />
-      {/* <FeaturedServices />
+      <JobApply />
+      <WhyChooseUs />
+      <HowItWorks />
 
-
-      <TestimonialSection /> */}
+      <TestimonialSection />
     </div>
   );
 };

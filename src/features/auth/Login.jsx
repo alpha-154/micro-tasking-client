@@ -21,11 +21,10 @@ import {
 import { auth } from "@/firebase";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
-import { useDispatch } from "react-redux";
-import { setUser } from "@/redux/slices/userSlice";
+
 
 export default function LoginForm() {
-  const dispatch = useDispatch();
+
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -66,7 +65,7 @@ export default function LoginForm() {
       if (response.status === 200) {
         // Store the token in localStorage
         const { token, user } = response.data;
-        dispatch(setUser(user));
+   
         localStorage.setItem("authToken", token);
         toast.success("Redirecting to dashboard...");
         navigate(`/dashboard/${user?.role.toLowerCase()}`);

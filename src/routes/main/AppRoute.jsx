@@ -9,19 +9,16 @@ import Unauthorized from "@/pages/Unauthorized";
 import PrivateRoute from "../guard/PrivateRoute";
 import DashboardLayout from "@/layout/DashboardLayout";
 //admin imports
-import AdminPrivate from "../guard/AdminPrivate";
 import AdminHome from "@/features/dashboard/admin/AdminHome";
 import ManageUser from "@/features/dashboard/admin/ManageUser";
 import ManageTask from "@/features/dashboard/admin/ManageTask";
 //buyer imports
-import BuyerPrivate from "../guard/BuyerPrivate";
 import BuyerHome from "@/features/dashboard/buyer/BuyerHome";
 import AddTask from "@/features/dashboard/buyer/AddTask";
 import MyTask from "@/features/dashboard/buyer/MyTask";
 import PurchaseCoin from "@/features/dashboard/buyer/PurchaseCoin";
 import PaymentHistory from "@/features/dashboard/buyer/PaymentHistory";
 //worker imports
-import WorkerPrivate from "../guard/WorkerPrivate";
 import WorkerHome from "@/features/dashboard/worker/WorkerHome";
 import TaskLIst from "@/features/dashboard/worker/TaskLIst";
 import MySubmissions from "@/features/dashboard/worker/MySubmissions";
@@ -40,135 +37,44 @@ const AppRoute = () => (
       <Route
         path="/dashboard/admin"
         element={
-          <PrivateRoute>
+          <PrivateRoute role="admin">
             <DashboardLayout role="admin" />
           </PrivateRoute>
         }
       >
-        <Route
-          index
-          element={
-            <AdminPrivate>
-              <AdminHome />
-            </AdminPrivate>
-          }
-        />
-        <Route
-          path="manage-user"
-          element={
-            <AdminPrivate>
-              <ManageUser />
-            </AdminPrivate>
-          }
-        />
-        <Route
-          path="manage-task"
-          element={
-            <AdminPrivate>
-              <ManageTask />
-            </AdminPrivate>
-          }
-        />
+        <Route index element={<AdminHome />} />
+        <Route path="manage-user" element={<ManageUser />} />
+        <Route path="manage-task" element={<ManageTask />} />
       </Route>
       {/* buyer route */}
       <Route
         path="/dashboard/buyer"
         element={
-          <PrivateRoute>
+          <PrivateRoute role="buyer">
             <DashboardLayout role="buyer" />
           </PrivateRoute>
         }
       >
-        <Route
-          index
-          element={
-            <BuyerPrivate>
-              <BuyerHome />
-            </BuyerPrivate>
-          }
-        />
-        <Route
-          path="add-task"
-          element={
-            <BuyerPrivate>
-              <AddTask />
-            </BuyerPrivate>
-          }
-        />
-        <Route
-          path="my-task"
-          element={
-            <BuyerPrivate>
-              <MyTask />
-            </BuyerPrivate>
-          }
-        />
-        <Route
-          path="purchase-coin"
-          element={
-            <BuyerPrivate>
-              <PurchaseCoin />
-            </BuyerPrivate>
-          }
-        />
-        <Route
-          path="payment-history"
-          element={
-            <BuyerPrivate>
-              <PaymentHistory />
-            </BuyerPrivate>
-          }
-        />
+        <Route index element={<BuyerHome />} />
+        <Route path="add-task" element={<AddTask />} />
+        <Route path="my-task" element={<MyTask />} />
+        <Route path="purchase-coin" element={<PurchaseCoin />} />
+        <Route path="payment-history" element={<PaymentHistory />} />
       </Route>
       {/* worker */}
       <Route
         path="/dashboard/worker"
         element={
-          <PrivateRoute>
+          <PrivateRoute role="worker">
             <DashboardLayout role="worker" />
           </PrivateRoute>
         }
       >
-        <Route
-          index
-          element={
-            <WorkerPrivate>
-              <WorkerHome />
-            </WorkerPrivate>
-          }
-        />
-        <Route
-          path="task-list"
-          element={
-            <WorkerPrivate>
-              <TaskLIst />
-            </WorkerPrivate>
-          }
-        />
-        <Route
-          path="my-submissions"
-          element={
-            <WorkerPrivate>
-              <MySubmissions />
-            </WorkerPrivate>
-          }
-        />
-        <Route
-          path="withdrawals"
-          element={
-            <WorkerPrivate>
-              <Withdrawals />
-            </WorkerPrivate>
-          }
-        />
-        <Route
-          path="task-details/:taskId"
-          element={
-            <WorkerPrivate>
-              <TaskDetail/>
-            </WorkerPrivate>
-          }
-        />
+        <Route index element={<WorkerHome />} />
+        <Route path="task-list" element={<TaskLIst />} />
+        <Route path="my-submissions" element={<MySubmissions />} />
+        <Route path="withdrawals" element={<Withdrawals />} />
+        <Route path="task-details/:taskId" element={<TaskDetail />} />
       </Route>
 
       {/* auth routes */}

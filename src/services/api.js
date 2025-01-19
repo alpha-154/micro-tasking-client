@@ -54,6 +54,12 @@ const fetchTasksbyUser = (uid) => {
   return apiClient.get(`/api/buyer/get-all-tasks/${uid}`);
 }
 
+const approveSubmission = (submissionData) => {
+  return apiClient.post("/api/buyer/approve-submission", submissionData);
+}
+const rejectSubmission = (submissionData) => {
+  return apiClient.post("/api/buyer/reject-submission", submissionData);
+}
 const updateTask = (taskData) => {
   return apiClient.patch("/api/buyer/update-task", taskData);
 }
@@ -63,6 +69,45 @@ const deleteTask = (uid, taskId) => {
   return apiClient.delete(`/api/buyer/delete-task/${uid}/${taskId}`);
 }
 
+const fetchApprovedTaskForWorkerWithStats = (uid) => {
+  return apiClient.get(`/api/worker/get-worker-submission-stats/${uid}`);
+}
+const fetchTaskForWorker = () => {
+  return apiClient.get("/api/worker/get-valid-tasks");
+}
+
+const fetchTaskDetailsForWoker = (taskId) => {
+  return apiClient.get(`/api/worker/get-task-details/${taskId}`);
+}
+
+const fetchWorkerAllTaskSubmissions = (uid) => {
+  return apiClient.get(`/api/worker/get-worker-submissions/${uid}`);
+}
+const submitTaskAsWorker = (taskData) => {
+  return apiClient.post("/api/worker/submit-task", taskData);
+}
+const fetchAdminStats = (uid) => {
+  return apiClient.get(`/api/admin/get-admin-stats/${uid}`);
+}
+const getAllUsersAsAdmin = (uid) => {
+  return apiClient.get(`/api/admin/get-all-users/${uid}`);
+}
+
+const updateUserRoleAsAdmin = (apiData) => {
+  return apiClient.patch("/api/admin/update-user-role", apiData);
+}
+
+const removeAnUserAsAdmin = (adminUid, userUid) => {
+  return apiClient.delete(`/api/admin/remove-user/${adminUid}/${userUid}`);
+}
+
+const fetchTasksbyAdminUid = (uid) => {
+  return apiClient.get(`/api/admin/get-all-tasks/${uid}`);
+}
+
+const removeTaskByAdmin = (uid, taskId) => {
+  return apiClient.delete(`/api/admin/remove-task/${uid}/${taskId}`);
+}
 
 export {
   registerUser,
@@ -71,7 +116,20 @@ export {
   fetchUserProfile,
   fetchBuyerStatsWithPendingSubmissions ,
   addTask,
+  approveSubmission,
+  rejectSubmission,
+  fetchApprovedTaskForWorkerWithStats,
+  fetchWorkerAllTaskSubmissions,
   fetchTasksbyUser,
   updateTask,
-  deleteTask
+  deleteTask,
+  fetchTaskForWorker,
+  fetchTaskDetailsForWoker,
+  submitTaskAsWorker,
+  fetchAdminStats,
+  getAllUsersAsAdmin,
+  updateUserRoleAsAdmin,
+  removeAnUserAsAdmin,
+  fetchTasksbyAdminUid,
+  removeTaskByAdmin 
 };

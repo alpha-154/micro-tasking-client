@@ -18,13 +18,19 @@ import {
 } from "@/components/ui/dialog";
 import { auth } from "@/firebase";
 import { useAuthState } from "react-firebase-hooks/auth";
-import { fetchBuyerStatsWithPendingSubmissions } from "@/services/api";
-
+import {
+  fetchBuyerStatsWithPendingSubmissions,
+  approveSubmission,
+  rejectSubmission,
+} from "@/services/api";
+import { toast } from "sonner";
 const BuyerHome = () => {
   const [user] = useAuthState(auth);
   const [taskStats, setTaskStats] = useState({});
   const [submissions, setSubmissions] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [approveLoading, setApproveLoading] = useState(false);
+  const [rejectLoading, setRejectLoading] = useState(false);
   const [selectedSubmission, setSelectedSubmission] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -55,14 +61,46 @@ const BuyerHome = () => {
     setIsModalOpen(true);
   };
 
-  const handleApprove = (id) => {
-    console.log(`Approved submission ${id}`);
-    // Implement approve logic here
+  const handleApprove = async (submissionId) => {
+    console.log(`Approved submission ${submissionId}`);
+    if (!submissionId) return;
+    try {
+      setApproveLoading(true);
+      const submissionData = {
+        submissionId,
+      };
+      const response = await approveSubmission(submissionData);
+      if (response.status === 200) {
+        toast.success("Submission approved successfully.");
+        // Update the submissions list after approval
+       
+      }
+    } catch (error) {
+      toast.error(error.message || "Something went wrong. Please try again.");
+    } finally {
+      setApproveLoading(false);
+    }
   };
 
-  const handleReject = (id) => {
-    console.log(`Rejected submission ${id}`);
-    // Implement reject logic here
+  const handleReject = async (submissionId) => {
+    console.log(`Rejected submission ${submissionId}`);
+    if (!submissionId) return;
+    try {
+      setRejectLoading(true);
+      const submissionData = {
+        submissionId,
+      };
+      const response = await rejectSubmission(submissionData);
+      if (response.status === 200) {
+        toast.success("Submission approved successfully.");
+        // Update the submissions list after rejected
+       
+      }
+    } catch (error) {
+      toast.error(error.message || "Something went wrong. Please try again.");
+    } finally {
+      setRejectLoading(false);
+    }
   };
 
   return (
@@ -134,7 +172,7 @@ const BuyerHome = () => {
                                 handleApprove(pendingSubmission._id)
                               }
                               variant="outline"
-                              className="bg-green-500 text-white hover:bg-green-600"
+                              className="bg-green-500 text-white hover:bg-green-600 hover:text-white"
                             >
                               Approve
                             </Button>
@@ -143,7 +181,7 @@ const BuyerHome = () => {
                                 handleReject(pendingSubmission._id)
                               }
                               variant="outline"
-                              className="bg-red-500 text-white hover:bg-red-600"
+                              className="bg-red-500 text-white hover:bg-red-600 hover:text-white"
                             >
                               Reject
                             </Button>

@@ -6,6 +6,7 @@ const workerProfiles = [
   {
     name: "John Doe",
     specialization: "Data Entry Specialist",
+    coins: "$20,000",
     description:
       "Expert in data entry, transcription, and maintaining accuracy in high-volume tasks.",
     highlights: [
@@ -19,6 +20,7 @@ const workerProfiles = [
   {
     name: "John Smith",
     specialization: "Social Media Content Creator",
+    coins: "$18,000",
     description:
       "Skilled in creating engaging social media posts, captions, and marketing campaigns.",
     highlights: [
@@ -32,6 +34,7 @@ const workerProfiles = [
   {
     name: "Joe Johnson",
     specialization: "Virtual Assistant",
+    coins: "$16,000",
     description:
       "Providing administrative support, email management, and scheduling services remotely.",
     highlights: [
@@ -47,6 +50,7 @@ const workerProfiles = [
   {
     name: "Michael Brown",
     specialization: "Content Writer",
+    coins: "$12,000",
     description:
       "Specialized in writing blogs, articles, and SEO-friendly content to drive traffic.",
     highlights: [
@@ -60,6 +64,7 @@ const workerProfiles = [
   {
     name: "Joe Davis",
     specialization: "Graphic Designer",
+    coins: "$10,000",
     description:
       "Experienced in creating visually appealing logos, banners, and infographics for clients.",
     highlights: [
@@ -78,6 +83,7 @@ const workerProfiles = [
   {
     name: "Rose Taylor",
     specialization: "Market Researcher",
+    coins: "$8,000",
     description:
       "Proficient in conducting surveys, analyzing data, and delivering actionable insights.",
     highlights: [
@@ -130,6 +136,7 @@ const TopWorkersSection = () => {
                   <h3 className="font-serif text-neutral-800 dark:text-primary text-2xl md:text-4xl mt-2 md:mt-5">
                     {worker.description}
                   </h3>
+                  <h1 className="text-2xl font-bold mt-4 md:mt-5">Total Earnings:{" "}<span className="text-green-500">{worker.coins}</span></h1>
                   <hr className="border-t-2 border-neutral-700/30 mt-4 md:mt-5" />
                   <ul className="flex flex-col gap-4 mt-4 md:mt-5">
                     {worker.highlights.map((highlight) => (
@@ -142,9 +149,11 @@ const TopWorkersSection = () => {
                       </li>
                     ))}
                   </ul>
+                 
                   <button className="bg-white hover:bg-white/80 transition duration-300 cursor-pointer text-gray-950 h-12 w-full md:w-auto px-6 rounded-xl font-semibold inline-flex items-center justify-center gap-2 mt-8">
                     <span>Top Rated</span>
                   </button>
+                  
                 </div>
                 <div>
                   <img
