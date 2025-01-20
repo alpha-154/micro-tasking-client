@@ -105,7 +105,7 @@ export default function RegisterForm() {
       navigate("/login");
     } catch (error) {
       console.error(error);
-      toast.error(error.message);
+     
     } finally {
       setIsLoading(false);
       form.reset();

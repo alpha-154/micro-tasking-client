@@ -74,7 +74,7 @@ export default function LoginForm() {
      
     } catch (error) {
       console.error("Error in SignInForm:", error);
-      toast.error(error?.response?.data?.message || error.message);
+      
     } finally {
       setIsLoading(false);
       form.reset();
@@ -82,42 +82,6 @@ export default function LoginForm() {
   }
 
   //Handle Google login
-  const handleGoogleLogin = async () => {
-    const provider = new GoogleAuthProvider();
-    try {
-      let result;
-
-      // Use popup for desktop
-      result = await signInWithPopup(auth, provider);
-
-      const user = result?.user || auth?.currentUser;
-
-      // Extract user information
-      const userData = {
-        firebaseUid: user.uid,
-        username: user.displayName,
-        email: user.email,
-        profileImage: user.photoURL,
-      };
-
-      // Make an API call to check if the user exists and save if not
-      const response = await registerUserWithGoogle(userData);
-      
-      if (response.status === 201) {
-        toast.success("Google Login successful! Account created.");
-       
-      } else if (response.status === 200) {
-        toast.success("Google Login successful!");
-      }
-      const { token, loggedInUserData } = response.data;
-      localStorage.setItem("authToken", token);
-      // Redirect to homepage
-      navigate(`/dashboard/${loggedInUserData?.role.toLowerCase()}`);
-    } catch (error) {
-      toast.error(error?.response?.data?.message || "An error occurred during Google login.");
-    }
-  };
-
   return (
     <div className="relative min-h-screen bg-white">
       {/* Header */}
@@ -236,12 +200,7 @@ export default function LoginForm() {
                 </Button>
               </form>
             </Form>
-            <Button
-              onClick={handleGoogleLogin}
-              className="bg-red-600 hover:bg-red-500 text-white p-2 w-full mb-4 border rounded-lg"
-            >
-              Login with Google
-            </Button>
+           
 
             <div className="flex items-center justify-center gap-2">
               <Button
