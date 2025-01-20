@@ -13,6 +13,8 @@ import {
   ArrowBigRight,
   X,
 } from "lucide-react";
+import { useUserContext } from "@/context/userContext";
+
 
 const roles = {
   admin: [
@@ -24,8 +26,8 @@ const roles = {
     { path: "/dashboard/buyer", title: "Home" },
     { path: "/dashboard/buyer/add-task", title: "Add Task" },
     { path: "/dashboard/buyer/my-task", title: "My Task" },
-    { path: "/dashboard/buyer/payment-history", title: "Payment History" },
     { path: "/dashboard/buyer/purchase-coin", title: "Purchase Coin" },
+    { path: "/dashboard/buyer/payment-history", title: "Payment History" },
   ],
   worker: [
     { path: "/dashboard/worker", title: "Home" },
@@ -53,6 +55,7 @@ const getIcon = (title) => {
 };
 
 const Sidebar = ({ role }) => {
+  const { loggedInUser, isFetching } = useUserContext();
   const [isExpanded, setIsExpanded] = useState(true);
   const [isMobile, setIsMobile] = useState(false);
   const location = useLocation();
@@ -127,14 +130,14 @@ const Sidebar = ({ role }) => {
           }`}
         >
           <img
-            src="/api/placeholder/40/40"
+            src={loggedInUser?.profileImage || "https://via.placeholder.com/150"}
             alt="User"
             className="w-10 h-10 rounded-full"
           />
           {isExpanded && (
             <div>
-              <h4 className="font-medium">Evano</h4>
-              <p className="text-sm text-gray-500">Project Manager</p>
+              <h4 className="font-medium">{loggedInUser?.username}</h4>
+              <p className="text-sm text-gray-500">{loggedInUser?.role}</p>
             </div>
           )}
         </div>

@@ -73,7 +73,14 @@ const BuyerHome = () => {
       if (response.status === 200) {
         toast.success("Submission approved successfully.");
         // Update the submissions list after approval
-       
+        setSubmissions((prevSubmissions) =>
+          prevSubmissions.map((submission) => ({
+            ...submission,
+            pendingSubmissions: submission.pendingSubmissions.filter(
+              (pendingSubmission) => pendingSubmission._id !== submissionId
+            ),
+          })).filter((submission) => submission.pendingSubmissions.length > 0) // Remove empty submissions
+        );
       }
     } catch (error) {
       toast.error(error.message || "Something went wrong. Please try again.");
@@ -81,7 +88,7 @@ const BuyerHome = () => {
       setApproveLoading(false);
     }
   };
-
+  
   const handleReject = async (submissionId) => {
     console.log(`Rejected submission ${submissionId}`);
     if (!submissionId) return;
@@ -92,9 +99,16 @@ const BuyerHome = () => {
       };
       const response = await rejectSubmission(submissionData);
       if (response.status === 200) {
-        toast.success("Submission approved successfully.");
-        // Update the submissions list after rejected
-       
+        toast.success("Submission rejected successfully.");
+        // Update the submissions list after rejection
+        setSubmissions((prevSubmissions) =>
+          prevSubmissions.map((submission) => ({
+            ...submission,
+            pendingSubmissions: submission.pendingSubmissions.filter(
+              (pendingSubmission) => pendingSubmission._id !== submissionId
+            ),
+          })).filter((submission) => submission.pendingSubmissions.length > 0) // Remove empty submissions
+        );
       }
     } catch (error) {
       toast.error(error.message || "Something went wrong. Please try again.");
@@ -102,6 +116,49 @@ const BuyerHome = () => {
       setRejectLoading(false);
     }
   };
+  
+
+  // const handleApprove = async (submissionId) => {
+  //   console.log(`Approved submission ${submissionId}`);
+  //   if (!submissionId) return;
+  //   try {
+  //     setApproveLoading(true);
+  //     const submissionData = {
+  //       submissionId,
+  //     };
+  //     const response = await approveSubmission(submissionData);
+  //     if (response.status === 200) {
+  //       toast.success("Submission approved successfully.");
+  //       // Update the submissions list after approval
+       
+  //     }
+  //   } catch (error) {
+  //     toast.error(error.message || "Something went wrong. Please try again.");
+  //   } finally {
+  //     setApproveLoading(false);
+  //   }
+  // };
+
+  // const handleReject = async (submissionId) => {
+  //   console.log(`Rejected submission ${submissionId}`);
+  //   if (!submissionId) return;
+  //   try {
+  //     setRejectLoading(true);
+  //     const submissionData = {
+  //       submissionId,
+  //     };
+  //     const response = await rejectSubmission(submissionData);
+  //     if (response.status === 200) {
+  //       toast.success("Submission approved successfully.");
+  //       // Update the submissions list after rejected
+       
+  //     }
+  //   } catch (error) {
+  //     toast.error(error.message || "Something went wrong. Please try again.");
+  //   } finally {
+  //     setRejectLoading(false);
+  //   }
+  // };
 
   return (
     <div className="min-h-screen w-full flex flex-col gap-5 py-8">

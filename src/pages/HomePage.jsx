@@ -38,16 +38,7 @@ const HomePage = () => {
   return (
     <div className="min-h-screen w-full">
       <div className="flex items-center justify-start p-4 mt-2 md:mb-4">
-        <div className="flex items-center justify-start gap-2 border border-gray-200 dark:border-gray-600 p-2 rounded-lg">
-          <Switch
-            id="theme-switch"
-            checked={isDarkMode}
-            onCheckedChange={setIsDarkMode}
-          />
-          <Label htmlFor="theme-switch">
-            {isDarkMode ? "Dark Mode" : "Light Mode"}
-          </Label>
-        </div>
+       
       </div>
       <Hero />
       <TopWorkersSection />

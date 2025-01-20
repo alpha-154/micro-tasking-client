@@ -8,12 +8,7 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { auth } from "@/firebase";
 import { useUserContext } from "@/context/userContext";
-const Header = ({
-  username = "johndoe",
-  role = "Member",
-  coins = 100,
-  avatarUrl,
-}) => {
+const Header = () => {
   const navigate = useNavigate();
 
   const { loggedInUser, isFetching } = useUserContext();

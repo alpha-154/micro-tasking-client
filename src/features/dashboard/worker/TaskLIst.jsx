@@ -26,8 +26,8 @@ const TaskLIst = () => {
         setLoading(true);
         const response = await fetchTaskForWorker();
         if (response.status === 200) {
-          setTasks(response.data.tasks);
-          console.log("my tasks -> ", response.data.tasks);
+          setTasks(response.data?.tasks);
+          console.log("my tasks -> ", response.data?.tasks);
         }
       } catch (error) {
         toast.error(

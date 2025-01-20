@@ -29,6 +29,7 @@ import { auth } from "@/firebase";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { addTask } from "@/services/api";
 import { toast } from "sonner";
+import { useUserContext } from "@/context/userContext";
 
 const formSchema = z.object({
   title: z.string().min(4, {
@@ -58,6 +59,7 @@ const AddTask = () => {
   const navigate = useNavigate();
   const [user] = useAuthState(auth);
   const [loading, setLoading] = useState(false);
+  const { loggedInUser ,updateCoins } = useUserContext();
 
   const form = useForm({
     resolver: zodResolver(formSchema),
@@ -74,7 +76,7 @@ const AddTask = () => {
   async function onSubmit(values) {
     console.log(values);
     const taskData = {
-      uid: user?.uid,
+      uid: loggedInUser?.firebaseUid,
       title: values.title,
       detail: values.detail,
       requiredWorkers: values.requiredWorkers,
@@ -83,11 +85,13 @@ const AddTask = () => {
       submissionInfo: values.submissionInfo,
       imageUrl: values.imageUrl,
     };
+    console.log("taskData -> ", taskData);
     try {
       setLoading(true);
       const response = await addTask(taskData);
       if (response.status === 201) {
         toast.success("Task added successfully!");
+        updateCoins("dec", Number(values.payableAmount * values.requiredWorkers));
         navigate("/dashboard/buyer/my-task");
       }
     } catch (error) {

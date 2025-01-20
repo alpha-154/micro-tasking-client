@@ -74,7 +74,7 @@ export default function LoginForm() {
      
     } catch (error) {
       console.error("Error in SignInForm:", error);
-      toast.error(error.response?.data?.message || error.message);
+      toast.error(error?.response?.data?.message || error.message);
     } finally {
       setIsLoading(false);
       form.reset();
@@ -102,18 +102,19 @@ export default function LoginForm() {
 
       // Make an API call to check if the user exists and save if not
       const response = await registerUserWithGoogle(userData);
-
+      
       if (response.status === 201) {
         toast.success("Google Login successful! Account created.");
-        dispatch(setUser(response.data.user));
+       
       } else if (response.status === 200) {
         toast.success("Google Login successful!");
       }
-
+      const { token, loggedInUserData } = response.data;
+      localStorage.setItem("authToken", token);
       // Redirect to homepage
-      navigate("/");
+      navigate(`/dashboard/${loggedInUserData?.role.toLowerCase()}`);
     } catch (error) {
-      toast.error(error.message || "An error occurred during Google login.");
+      toast.error(error?.response?.data?.message || "An error occurred during Google login.");
     }
   };
 

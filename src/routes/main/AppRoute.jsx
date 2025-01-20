@@ -7,6 +7,7 @@ import RegisterForm from "@/features/auth/Register";
 import LoginForm from "@/features/auth/Login";
 import Unauthorized from "@/pages/Unauthorized";
 import PrivateRoute from "../guard/PrivateRoute";
+
 import DashboardLayout from "@/layout/DashboardLayout";
 //admin imports
 import AdminHome from "@/features/dashboard/admin/AdminHome";
@@ -30,7 +31,14 @@ const AppRoute = () => (
     <Routes>
       {/* root layout */}
       <Route path="/" element={<RootLayout />}>
-        <Route index element={<HomePage />} />
+        <Route
+          index
+          element={
+         
+              <HomePage />
+            
+          }
+        />
       </Route>
       {/* dashboard layout */}
       {/* admin  */}

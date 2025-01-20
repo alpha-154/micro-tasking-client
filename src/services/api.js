@@ -68,7 +68,12 @@ const deleteTask = (uid, taskId) => {
   console.log(uid, taskId);
   return apiClient.delete(`/api/buyer/delete-task/${uid}/${taskId}`);
 }
-
+const purchaseCoinsAsBuyer = (apiData) => {
+  return apiClient.post("/api/buyer/purchase-coins", apiData);
+}
+const getBuyerPayments = (uid) => {
+  return apiClient.get(`/api/buyer/get-payment-histories/${uid}`);
+}
 const fetchApprovedTaskForWorkerWithStats = (uid) => {
   return apiClient.get(`/api/worker/get-worker-submission-stats/${uid}`);
 }
@@ -80,14 +85,20 @@ const fetchTaskDetailsForWoker = (taskId) => {
   return apiClient.get(`/api/worker/get-task-details/${taskId}`);
 }
 
-const fetchWorkerAllTaskSubmissions = (uid) => {
-  return apiClient.get(`/api/worker/get-worker-submissions/${uid}`);
+const fetchWorkerAllTaskSubmissions = (uid, currentPage, pageSize) => {
+  return apiClient.get(`/api/worker/get-worker-submissions/${uid}?page=${currentPage}&limit=${pageSize}`);
 }
 const submitTaskAsWorker = (taskData) => {
   return apiClient.post("/api/worker/submit-task", taskData);
 }
-const fetchAdminStats = (uid) => {
-  return apiClient.get(`/api/admin/get-admin-stats/${uid}`);
+const submitWithdrawalRequest = (formData) => {
+  return apiClient.post("/api/worker/withdrawal-request", formData);
+}
+const fetchAdminDashboardData = (uid) => {
+  return apiClient.get(`/api/admin/get-admin-dashboard-data/${uid}`);
+}
+const approveWithdrawalRequest = (apiData) => {
+  return apiClient.post("/api/admin/approve-withdrawal-request", apiData);
 }
 const getAllUsersAsAdmin = (uid) => {
   return apiClient.get(`/api/admin/get-all-users/${uid}`);
@@ -123,10 +134,14 @@ export {
   fetchTasksbyUser,
   updateTask,
   deleteTask,
+  purchaseCoinsAsBuyer,
+  getBuyerPayments,
   fetchTaskForWorker,
   fetchTaskDetailsForWoker,
   submitTaskAsWorker,
-  fetchAdminStats,
+  submitWithdrawalRequest,
+  fetchAdminDashboardData ,
+  approveWithdrawalRequest,
   getAllUsersAsAdmin,
   updateUserRoleAsAdmin,
   removeAnUserAsAdmin,

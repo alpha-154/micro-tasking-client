@@ -86,7 +86,7 @@ const WorkerHome = () => {
                 <TableRow key={submission._id}>
                   <TableCell>{submission.buyerName}</TableCell>
                   <TableCell>{submission.taskTitle}</TableCell>
-                  <TableCell>${submission.taskInfo.payableAmount}</TableCell>
+                  <TableCell>${submission.taskInfo?.payableAmount}</TableCell>
                   <TableCell>
                     <Badge
                       variant="outline"

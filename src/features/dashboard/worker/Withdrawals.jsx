@@ -11,17 +11,16 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
+import { toast } from "sonner";
+import { useUserContext } from "@/context/userContext";
+import { submitWithdrawalRequest } from "@/services/api";
 
 const COIN_TO_DOLLAR_RATE = 20;
 const MINIMUM_WITHDRAWAL_COINS = 200;
 
 const Withdrawals = () => {
-  const [user, setUser] = useState({
-    email: "worker@example.com",
-    name: "John Doe",
-    totalCoins: 300,
-  });
-
+  const { loggedInUser, isFetching, updateCoins } = useUserContext();
+  const [loading, setLoading] = useState(false);
   const [coinsToWithdraw, setCoinsToWithdraw] = useState(null);
   const [withdrawalAmount, setWithdrawalAmount] = useState(0);
   const [paymentSystem, setPaymentSystem] = useState("");
@@ -33,49 +32,51 @@ const Withdrawals = () => {
     );
   }, [coinsToWithdraw]);
 
-  const handleWithdrawal = () => {
+  const handleWithdrawal = async () => {
     if (
       coinsToWithdraw === null ||
       coinsToWithdraw < MINIMUM_WITHDRAWAL_COINS ||
-      coinsToWithdraw > user.totalCoins
+      coinsToWithdraw > loggedInUser?.coins ||
+      !loggedInUser
     ) {
-      alert("Invalid withdrawal amount");
+      toast.error("Invalid withdrawal amount.");
       return;
     }
 
     const withdrawalData = {
-      worker_email: user.email,
-      worker_name: user.name,
-      withdrawal_coin: coinsToWithdraw,
-      withdrawal_amount: withdrawalAmount,
-      payment_system: paymentSystem,
-      account_number: accountNumber,
-      withdraw_date: new Date(),
-      status: "pending",
+      uid: loggedInUser?.firebaseUid,
+      coins: coinsToWithdraw,
+      amount: withdrawalAmount,
+      paymentSystem: paymentSystem,
+      accountNumber: accountNumber,
     };
 
     // Simulating database interaction
     console.log("Withdrawal request:", withdrawalData);
-
-    // Reset form
-    setCoinsToWithdraw(0);
-    setPaymentSystem("");
-    setAccountNumber("");
-
-    // Update user's coin balance
-    setUser((prevUser) => ({
-      ...prevUser,
-      totalCoins: prevUser.totalCoins - coinsToWithdraw,
-    }));
-
-    alert("Withdrawal request submitted successfully!");
+    try {
+      setLoading(true);
+      const response = await submitWithdrawalRequest(withdrawalData);
+      if (response.status === 201) {
+        toast.success("Withdrawal request submitted successfully!");
+        updateCoins("dec", coinsToWithdraw);
+      }
+    } catch (error) {
+      console.log(error?.response?.data?.message || "Something went wrong.");
+      toast.error("Something went wrong. Please try again.");
+    } finally {
+      // Reset form
+      setCoinsToWithdraw(0);
+      setPaymentSystem("");
+      setAccountNumber("");
+      setLoading(false);
+    }
   };
 
   const canWithdraw =
-    user.totalCoins >= MINIMUM_WITHDRAWAL_COINS &&
+    loggedInUser?.coins >= MINIMUM_WITHDRAWAL_COINS &&
     coinsToWithdraw !== null &&
     coinsToWithdraw >= MINIMUM_WITHDRAWAL_COINS &&
-    coinsToWithdraw <= user.totalCoins;
+    coinsToWithdraw <= loggedInUser?.coins;
 
   return (
     <div className="w-full p-4">
@@ -87,12 +88,13 @@ const Withdrawals = () => {
           </CardHeader>
           <CardContent>
             <p className="text-lg mb-2">
-              Total Coins: <span className="font-bold">{user.totalCoins}</span>
+              Total Coins:{" "}
+              <span className="font-bold">{loggedInUser?.coins}</span>
             </p>
             <p className="text-lg">
               Withdrawal Amount:{" "}
               <span className="font-bold">
-                ${(user.totalCoins / COIN_TO_DOLLAR_RATE).toFixed(2)}
+                ${(loggedInUser?.coins / COIN_TO_DOLLAR_RATE).toFixed(2)}
               </span>
             </p>
           </CardContent>
@@ -122,12 +124,12 @@ const Withdrawals = () => {
                         ? null
                         : Math.min(
                             parseInt(e.target.value) || 0,
-                            user.totalCoins
+                            loggedInUser?.coins
                           );
                     setCoinsToWithdraw(value);
                   }}
                   min={0}
-                  max={user.totalCoins}
+                  max={loggedInUser?.coins}
                   required
                 />
               </div>
@@ -149,10 +151,9 @@ const Withdrawals = () => {
                     <SelectValue placeholder="Select payment system" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="bkash">Bkash</SelectItem>
-                    <SelectItem value="rocket">Rocket</SelectItem>
-                    <SelectItem value="nagad">Nagad</SelectItem>
-                    <SelectItem value="paypal">PayPal</SelectItem>
+                    <SelectItem value="Bkash">Bkash</SelectItem>
+                    <SelectItem value="Nagad">Nagad</SelectItem>
+                    <SelectItem value="Stripe">Stripe</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -169,11 +170,10 @@ const Withdrawals = () => {
               </div>
 
               {canWithdraw ? (
-                <Button type="submit">Withdraw</Button>
+                <Button type="submit">{ loading ? "Submitting..." : "Submit" }</Button>
               ) : (
                 <p className="text-red-500">
-                   Minimum withdrawal is{" "}
-                  {MINIMUM_WITHDRAWAL_COINS} coins.
+                  Minimum withdrawal is {MINIMUM_WITHDRAWAL_COINS} coins.
                 </p>
               )}
             </form>

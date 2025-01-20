@@ -21,18 +21,44 @@ export const UserProvider = ({ children }) => {
           console.log("user -> ", response.data?.user);
         } catch (error) {
           console.error("Failed to fetch user data:", error);
-          toast.error(error?.message || "Something went wrong. Please try again.");
+          toast.error(
+            error?.message || "Something went wrong. Please try again."
+          );
         } finally {
           setIsFetching(false);
         }
-      } 
+      }
     };
 
     fetchUser();
   }, [user]);
 
+  const updateCoins = (action, value) => {
+    console.log("updateCoins called with action:", action, "and value:", value);
+    if (!loggedInUser) {
+      console.error("No logged-in user found.");
+      return;
+    }
+
+    setLoggedInUser((prevUser) => {
+      if (!prevUser || typeof prevUser.coins !== "number") {
+        console.error("Coins property is missing or invalid.");
+        return prevUser;
+      }
+
+      const updatedCoins =
+        action === "inc"
+          ? prevUser.coins + value
+          : action === "dec"
+          ? prevUser.coins - value
+          : prevUser.coins;
+
+      return { ...prevUser, coins: updatedCoins };
+    });
+  };
+
   return (
-    <UserContext.Provider value={{ loggedInUser, isFetching }}>
+    <UserContext.Provider value={{ loggedInUser, isFetching, updateCoins }}>
       {children}
     </UserContext.Provider>
   );
