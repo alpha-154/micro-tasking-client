@@ -31,23 +31,16 @@ const AppRoute = () => (
     <Routes>
       {/* root layout */}
       <Route path="/" element={<RootLayout />}>
-        <Route
-          index
-          element={
-         
-              <HomePage />
-            
-          }
-        />
+        <Route index element={<HomePage />} />
       </Route>
       {/* dashboard layout */}
       {/* admin  */}
       <Route
         path="/dashboard/admin"
         element={
-          <PrivateRoute role="admin">
+          // <PrivateRoute role="admin">
             <DashboardLayout role="admin" />
-          </PrivateRoute>
+          // </PrivateRoute>
         }
       >
         <Route index element={<AdminHome />} />
@@ -58,9 +51,9 @@ const AppRoute = () => (
       <Route
         path="/dashboard/buyer"
         element={
-          <PrivateRoute role="buyer">
+          // <PrivateRoute role="buyer">
             <DashboardLayout role="buyer" />
-          </PrivateRoute>
+          // </PrivateRoute>
         }
       >
         <Route index element={<BuyerHome />} />
@@ -73,9 +66,9 @@ const AppRoute = () => (
       <Route
         path="/dashboard/worker"
         element={
-          <PrivateRoute role="worker">
+          // <PrivateRoute role="worker">
             <DashboardLayout role="worker" />
-          </PrivateRoute>
+          // </PrivateRoute>
         }
       >
         <Route index element={<WorkerHome />} />
